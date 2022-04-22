@@ -35,3 +35,7 @@ build/
 
 /.idea
 /.mvn
+.gitignore
+mvnw.cmd
+
+pom.xml
