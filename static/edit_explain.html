@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<div id="app">
+    <div>
+        <input type="text" v-model="explain">
+        <input type="button" value="保存" @click="saveEdit()">
+    </div>
+</div>
+
+</body>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            explain: ""
+        },
+        methods: {
+            saveEdit() {
+                _this = this;
+                let data=new FormData();
+                data.append("explain",_this.explain);
+                axios({
+                    method: "POST",
+                    url: `/mis/saveExplain`,
+                    data: data,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                }).then(function (res) {
+                    alert("保存成功");
+                }).catch(function (err) {
+                    alert("保存失败");
+                });
+            }
+        }
+    });
+</script>
+</html>
