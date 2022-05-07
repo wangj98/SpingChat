@@ -17,30 +17,31 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-@ServerEndpoint(value = "/imsocket/{username}")
-@Component
+@ServerEndpoint(value = "/websocket/{uid}")
+//@Component
 public class WebSocketService {
 
     private static final Logger log = LoggerFactory.getLogger(WebSocketService.class);
     //记录当前在线连接数
-    public static final Map<String, Session> sessionMap = new ConcurrentHashMap<>();
+    public static final Map<Integer, Session> sessionMap = new ConcurrentHashMap<>();
+
 
     /*
      * 连接建立成功调用的方法
      *
      * */
     @OnOpen
-    public void onOpen(Session session, @PathParam("username") String username) {
-        sessionMap.put(username, session);
-        log.info("有新用户加入,username={},当前在线人数为：{}", username, sessionMap.size());
-        JSONObject result = new JSONObject();
-        JSONArray array = new JSONArray();
+    public void onOpen(Session session, @PathParam("uid") Integer uid) {
+
+        sessionMap.put(uid, session);
+        log.info("有新用户加入,uid={},当前在线人数为：{}", uid, sessionMap.size());
+        JSONObject result = new JSONObject();//存放所有在线人员
+        JSONArray array = new JSONArray();//将所有人放在一个json数组中
         result.set("users", array);
         for (Object key : sessionMap.keySet()) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.set("username", key);
-            array.add(jsonObject);
+            jsonObject.set("uid", key);
+            array.add(jsonObject);//数组存放的所有人的uid
         }
 
 
@@ -54,22 +55,30 @@ public class WebSocketService {
      * @param message客户端发送过来的消息
      *
      * */
+    /*
+    *message 需要是json格式的字符串, {"fromUid":"1","uid":"424","text":"你好啊"}
+    * fromUid,cid,text,
+    *发给cid房间号的所有uid,当cid中只有一个uid时，即为私聊(暂用uid实现私聊)
+    * 存在多个uid即为一个群，遍历发给每个用户
+     */
     @OnMessage
-    public void OnMessage(String message, Session session, @PathParam("username") String username) {
-        log.info("服务端收到用户username={}的消息：{}", username, message);
+    public void OnMessage(String message, Session session, @PathParam("uid") Integer uid) {
+
+        log.info("服务端收到用户uid={}的消息：{}", uid, message);
         JSONObject obj = JSONUtil.parseObj(message);
-        String toUsername = obj.getStr("to");//发送给某人
+        Integer toUid = obj.getInt("uid");//接收方的id
         String text = obj.getStr("text");//需要发送的文本
-        Session toSession = sessionMap.get(toUsername);//通过用户名找到session，通过session发送文本
+        Session toSession = sessionMap.get(toUid);//通过用户名找到session，通过session发送文本
+
         if (toSession != null) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.set("from", username);
+            jsonObject.set("from", uid);//发送方的uid
             jsonObject.set("text", text);
-            this.sendMessage(jsonObject.toString(), toSession);
-            log.info("发送给用户username={}，消息：{}", toUsername, jsonObject.toString());
+            this.sendMessage(message, toSession);
+            log.info("用户{}发送给用户{}，消息：{}",uid , toUid, jsonObject.get("text"));
 
         } else {
-            log.info("发送失败,未找到用户username={}的=session", toUsername);
+            log.info("发送失败,未找到用户Uid={}的session", toUid);
         }
 
     }
@@ -83,9 +92,20 @@ public class WebSocketService {
     /*
      * 服务端发送消息给客户端
      * */
-    private static void sendMessage(String message, Session toSession) {
+    public static void sendMessage(String message, Session toSession) {
         try {
-            log.info("服务端给客户端[{}]发送消息", toSession.getId(), message);
+            log.info("服务端给客户端[{}]发送消息,消息为{}", toSession.getId(), message);
+            toSession.getBasicRemote().sendText(message);
+
+        } catch (IOException e) {
+            log.error("服务端发送消息给客户端失败", e);
+        }
+    }
+
+    public static void sendMessageByUid(String message, Session toSession) {
+        try {
+
+            log.info("服务端给客户端[{}]发送消息", toSession.getId(), toSession);
             toSession.getBasicRemote().sendText(message);
 
         } catch (IOException e) {

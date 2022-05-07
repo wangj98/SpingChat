@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    </head>
+    <body>
+        <div id="app">
+                <div id="main">
+                    <div id="mainHead">
+                        房间号:{{roomId}} [{{status}}]
+                    </div>
+                    <div id="messages">
+                        <ul>
+                            <li v-for="message in messages" >
+                                <div id="messageOne">
+                                    ({{message.time}}) <span style="color:blue">{{message.user}}</span>:<br>
+                                    {{message.content}}
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="input">
+                        <input type="text" id="messageInput" v-model="chat" style="height: 80px">
+                        <input type="button" id="messageSend" value="发送" @click="pubchat()">
+                    </div>
+                </div>
+        </div>
+
+    </body>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                messages: [],
+                webSock: null,
+                roomId: "",
+                chat: "",
+                status: "",
+            },
+            created() {
+                this.roomId = Math.round(Math.random()*10000).toString();
+                this.initWebSocket();
+            },
+            destroyed() {
+                this.webSock.close() //离开路由之后断开websocket连接
+            },
+            methods: {
+                initWebSocket() { //初始化weosocket
+                    const wsuri = "ws://127.0.0.1:80/websocket/1";
+                    this.webSock = new WebSocket(wsuri);
+                    this.webSock.onmessage = this.websocketonmessage;
+                    this.webSock.onopen = this.websocketonopen;
+                    this.webSock.onerror = this.websocketonerror;
+                    this.webSock.onclose = this.websocketclose;
+                },
+                websocketonopen() { //连接建立之后执行send方法发送数据
+                    let actions = {"name": "参与者", "id": this.roomId};
+                    this.websocketsend(JSON.stringify(actions));
+                },
+                websocketonerror() {//连接建立失败重连
+                    // alert("创建聊天室失败，正在重新连接");
+                    this.initWebSocket();
+                },
+                websocketonmessage(e) { //数据接收
+                    const readData = JSON.parse(e.data);
+                    alert(e.data)
+                    // alert(readData);
+                    if (readData.sending) {
+                        this.status = readData.sending;
+                    } else {
+                        this.messages.push(readData);
+                        this.status = "";
+                    }
+
+                },
+                websocketsend(Data) {//数据发送
+                    this.webSock.send(Data);
+                },
+                websocketclose(e) {  //关闭
+                    console.log('断开连接', e);
+                },
+                pubchat(e) {
+                    _this = this;
+                    let date = new Date();
+                    let month = date.getMonth() < 9 ? "0" + (date.getMonth() + 1) : date.getMonth();
+                    let day = date.getDay() <= 9 ? "0" + (date.getDay()) : date.getDay();
+                    let hour = date.getHours() <= 9 ? "0" + (date.getHours()) : date.getHours();
+                    let minutes = date.getMinutes() <= 9 ? "0" + (date.getMinutes()) : date.getMinutes();
+                    let seconds = date.getSeconds() <= 9 ? "0" + (date.getSeconds()) : date.getSeconds();
+                    let time = date.getFullYear()+"-"+month+"-"+day+" "+hour+":"+minutes+":"+seconds;
+                    let data = new FormData();
+                    let tempMessage = {time:time, user: "参与者", content:_this.chat}
+                    data.append("room_id", _this.roomId);
+                    data.append("message", JSON.stringify(tempMessage));
+                    axios.post('127.0.0.1:80/pub', data)
+                    .then(function (response) {
+                    }).catch(function (err) {
+                    });
+                    message = {user:"参与者", content:_this.chat}
+                    _this.messages.push(tempMessage)
+                },
+            }
+        });
+    </script>
+
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+        #app {
+            position: absolute;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #main {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            margin: 10px;
+            padding: 10px;
+            background-color: cadetblue;
+        }
+        #messages {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            background-color: white;
+            align-self: flex-start;
+            overflow-y: scroll;
+        }
+        #messages ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+        #messages li {
+            list-style: none;
+            padding: 5px;
+        }
+        #messages li:nth-of-type(odd) {
+            background-color: lightblue;
+        }
+        #messageOne {
+            width: 100%;
+        }
+        #input {
+            display: flex;
+            background-color: cadetblue;
+            height: 100px;
+            padding: 10px;
+            /*align-self: ;*/
+        }
+        #messageInput {
+            width: 100%;
+        }
+        #messageSend {
+            width: 100px;
+            height: 50px;
+        }
+    </style>
+</html>

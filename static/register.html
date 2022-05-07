@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="">
+    <title>注册</title>
+</head>
+<body>
+<section>
+    <!--    背景色-->
+    <div class="color"></div>
+    <div class="color"></div>
+    <div class="color"></div>
+    <div class="box">
+        <!--        背景圆-->
+        <div class="circle" style="--x:0"></div>
+        <div class="circle" style="--x:1"></div>
+        <div class="circle" style="--x:2"></div>
+        <div class="circle" style="--x:3"></div>
+        <div class="circle" style="--x:4"></div>
+        <!--        登录框-->
+        <div class="container">
+            <div class="form">
+                <h2>注册</h2>
+                <form action="" method="post">
+                    <div class="inputBox">姓名
+                        <input type="text" placeholder="username" value="" id="username">
+                    </div>
+                    <div class="inputBox">密码
+                        <input type="text" placeholder="password" value="" id="password">
+                    </div>
+                    <div class="inputBox">性别
+                        <input type="text" placeholder="sex" value="" id="sex">
+                    </div>
+                    <div class="inputBox">地址
+                        <input type="text" placeholder="address" value="" id="address">
+                    </div>
+                    <div class="inputBox">邮箱
+                        <input type="text" placeholder="email" value="" id="email">
+                    </div>
+                    <div class="inputBox">年龄
+                        <input type="text" placeholder="age" value="" id="age">
+                    </div>
+                    <div class="inputBox">
+
+                        <!--button 按钮,type 设置类型  onclick调用脚本-->
+                        <p align="left">
+                            <button type="button" onclick="login()">注册</button>
+                        </p>
+
+                        <!--脚本-->
+                        <script>
+                            function login() {
+                                <!--根据段落的ID，获取段落里面的输入数据，主要是getElementById-->
+                                var username = document.getElementById("username").value;
+                                var pwd = document.getElementById("password").value;
+                                var sex = document.getElementById("sex").value;
+                                var address = document.getElementById("address").value;
+                                var email = document.getElementById("email").value;
+                                var age = document.getElementById("age").value;
+                                var httpRequest = new XMLHttpRequest();//第一步：创建需要的对象
+                                httpRequest.open('POST', 'http://localhost/user/register', true); //第二步：打开连接/***发送json格式文件必须设置请求头 ；如下 - */
+                                httpRequest.setRequestHeader("Content-type", "application/json");//设置请求头 注：post方式必须设置请求头（在建立连接后设置请求头）var obj = { name: 'zhansgan', age: 18 };
+                                httpRequest.withCredentials=true;
+                                httpRequest.send(JSON.stringify({
+                                    "username": username,
+                                    "password": pwd,
+                                    "sex":sex,
+                                    "address":address,
+                                    "email":email,
+                                    "age":age,
+                                }));//发送请求 将json写入send中
+                                /**
+                                 * 获取数据后的处理程序
+                                 */
+                                httpRequest.onreadystatechange = function () {//请求后的回调接口，可将请求成功后要执行的程序写在其中
+                                    if (httpRequest.readyState == 4 && httpRequest.status == 200) {//验证请求是否发送成功
+                                        var json = httpRequest.responseText;//获取到服务端返回的数据
+                                        alert(json);
+                                        if(json=="注册成功"){
+                                            window.open("login.html")
+                                        }else {
+                                            alert(json)
+
+                                        }
+
+                                        // console.log(json);
+                                    }
+                                };
+                            }
+
+                            <!--判断用户名和密码对不对-->
+
+                        </script>
+
+
+                    </div>
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+
+
+<style type="text/css">
+    <!--
+    清除边框-- >
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /*
+    垂直水平居中
+    */
+    section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(to bottom, #f1f4f9, #dff1ff);
+    }
+
+    /*背景颜色*/
+    section .color {
+        position: absolute;
+        filter: blur(200px);
+    }
+
+    section .color:nth-child(1) {
+        top: -350px;
+        width: 600px;
+        height: 600px;
+        background: #ff359d;
+    }
+
+    section .color:nth-child(2) {
+        bottom: -150px;
+        left: 100px;
+        width: 500px;
+        height: 500px;
+        background: #fffd87;
+    }
+
+    section .color:nth-child(3) {
+        bottom: 50px;
+        right: 100px;
+        width: 500px;
+        height: 500px;
+        background: #00d2ff;
+    }
+
+    /*登录框样式*/
+
+    .container {
+        position: relative;
+        width: 400px;
+        min-height: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        padding: 50px;
+    }
+
+    /*登陆标题样式*/
+    .form h2 {
+        position: relative;
+        color: #fff;
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: 5px;
+        margin-bottom: 30px;
+        cursor: pointer;
+    }
+
+</style>
+</html>
