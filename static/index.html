@@ -49,7 +49,7 @@
             },
             methods: {
                 initWebSocket() { //初始化weosocket
-                    const wsuri = "ws://127.0.0.1:80/imsocket/test";
+                    const wsuri = "ws://127.0.0.1:80/websocket/1";
                     this.webSock = new WebSocket(wsuri);
                     this.webSock.onmessage = this.websocketonmessage;
                     this.webSock.onopen = this.websocketonopen;
