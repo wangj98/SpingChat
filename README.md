@@ -1,9 +1,22 @@
-#
+#API
+返回消息体
+{
+"code":0,
+"data":{"address": "",
+"sex": "",
+"token": "",
+"age": ,
+"email": "",
+"username": ""},
+}
 
-## /pub
+## /chat/pub
 - uid: 用户id
 - cid: 会话id
 - message: 会话内容
+##/user/login
+##/user/register
+
 ## controller
 - User 用戶管理
 - Chat 聊天
