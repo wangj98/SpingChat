@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #API
 返回消息体
 {
@@ -10,12 +11,32 @@
 "username": ""},
 }
 
+=======
+
+# Api
+## 返回消息体
+```
+{
+"code":0,
+"data":{},
+}
+```
+
+>>>>>>> 193790be675fbfd80cc26d644c35b68f77ba3acf
 ## /chat/pub
 - uid: 用户id
 - cid: 会话id
 - message: 会话内容
+<<<<<<< HEAD
 ##/user/login
 ##/user/register
+=======
+
+## /user/login
+
+## /user/register
+
+>>>>>>> 193790be675fbfd80cc26d644c35b68f77ba3acf
 
 ## controller
 - User 用戶管理
@@ -45,3 +66,5 @@ create table user (
  
 )
 ```
+# SpringChat
+
