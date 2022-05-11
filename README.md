@@ -19,14 +19,14 @@
 - uid: 用户id
 - cid: 会话id
 - message: 会话内容
+##/chat/pub/historyMessage
+-按页查询历史信息
 
 ##/user/login
 ##/user/register
 =======
 
-## /user/login
 
-## /user/register
 
 
 
