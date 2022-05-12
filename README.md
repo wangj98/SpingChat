@@ -2,15 +2,18 @@
 
 # Api
 ## 返回消息体
-```
+```json
 {
 "code":0,
-"data":{"address": "",
-"sex": "",
-"token": "",
-"age": ,
-"email": "",
-"username": ""},
+"data":
+    {
+        "address": "",
+        "sex": "",
+        "token": "",
+        "age": ,
+        "email": "",
+        "username": ""
+   },
 }
 ```
 
