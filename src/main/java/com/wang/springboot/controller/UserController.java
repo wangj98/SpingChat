@@ -13,14 +13,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
-/*
+/**
  * 实现登录注册
  *
  * */
 @RestController
 @RequestMapping()
 public class UserController {
-    @Autowired
     private UserService userService;
 
     private WebSocketService webSocketService;
@@ -92,7 +91,6 @@ public class UserController {
     @PostMapping("/exit")
     public User exit(@RequestBody User user) {
 
-        user.setToken(null);
         userService.tokenUpdate(user);
 
         return user;
