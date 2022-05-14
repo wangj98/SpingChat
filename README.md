@@ -10,12 +10,14 @@
 ###/user/login
 ###/user/register
 
+
 ## ChatController
 - 發佈私聊
 - 查看历史记录
 - 查看未读信息
-- 
+
 ### /chat/pub
+
 - uid: 用户id
 - cid: 会话id
 - message: 会话内容
@@ -24,8 +26,6 @@
 -按页查询历史信息
 ###/chat/pub/unreadMessage
 -查看未读信息
-
-
 
 
 ## 表
