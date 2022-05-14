@@ -5,7 +5,9 @@ import com.wang.springboot.dao.ChatIdDao;
 import com.wang.springboot.demain.ChatId;
 import com.wang.springboot.service.ChatIdService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ChatIdServiceImp implements ChatIdService {
     @Autowired
     private ChatIdDao chatIdDao;

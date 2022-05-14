@@ -1,14 +1,16 @@
 package com.wang.springboot.service.Imp;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wang.springboot.dao.MessageDao;
 import com.wang.springboot.demain.Message;
 import com.wang.springboot.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class MessageServiceImp implements MessageService {
     @Autowired
     private MessageDao messageDao;
@@ -60,21 +62,42 @@ public class MessageServiceImp implements MessageService {
     @Override
     public boolean messageInsert(Message message) {
 
-        return messageDao.insert(message) != 0;//插入成功时,返回真
+        return messageDao.insert(message) > 0;//插入成功时,返回真
     }
 
     //按页查询信息:先查到两人对应的会话,根据会话查询聊天记录
     @Override
-    public Page<Message> messageIPage(Integer user_a,Integer user_b,Integer page, Integer num) {
-        Page<Message> objectPage = new Page<>();
+    public Page<Message> messageIPage(Integer user_a, Integer user_b, Integer current, Integer size) {
+        Page<Message> objectPage = new Page<>(current,size);
         //查询cid
         QueryWrapper<Message> qw = new QueryWrapper<>();
-        qw.eq("formUid", user_a).eq("toUid",user_b);
+        if(user_a>user_b){
+            user_a=user_a+user_b-(user_b=user_a);
+        }
+        qw.eq("fromUid", user_a).eq("toUid", user_b).last("limit 1");//存在多条，只查一条
         Integer cid = messageDao.selectOne(qw).getCid();
+
+
         QueryWrapper<Message> qw1 = new QueryWrapper<>();
         //根据cid查找倒序数据
-        qw1.eq("cid",cid).orderByDesc("id");
+        qw1.eq("cid", cid).orderByDesc("id");
+
 
         return messageDao.selectPage(objectPage, qw1);
+    }
+
+    //来自某人的信息未读,未读的信息状态为null;返回后,将阅读状态设置为1
+    @Override
+    public List<Message> unreadMessage(Integer formUid, Integer toUid) {
+        QueryWrapper<Message> qw = new QueryWrapper<>();
+        qw.eq("fromUid",formUid).eq("toUid",toUid).isNull("readState");
+        List<Message> messages = messageDao.selectList(qw);
+
+        UpdateWrapper<Message> uw = new UpdateWrapper<>();
+        uw.set("readState",1).isNull("readState");
+        messageDao.update(null,uw);
+
+
+        return messages;
     }
 }

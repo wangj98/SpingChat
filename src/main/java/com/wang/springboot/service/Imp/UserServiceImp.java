@@ -1,6 +1,7 @@
 package com.wang.springboot.service.Imp;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.wang.springboot.dao.UserDao;
 import com.wang.springboot.demain.User;
 import com.wang.springboot.service.UserService;
@@ -46,7 +47,11 @@ public class UserServiceImp implements UserService {
 
     @Override
     public boolean tokenUpdate(User user) {//更新token
+        UpdateWrapper<User> qw = new UpdateWrapper<>();
 
-        return userDao.updateById(user)!=0;//每次登录成功更新token;
+        qw.eq("id",user.getId());
+        qw.set("token",null);
+
+        return userDao.update(null,qw)!=0;//每次登录成功更新token;
     }
 }

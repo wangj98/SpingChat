@@ -11,6 +11,7 @@ public interface MessageService {
     public List<Message> selectFromTo(Integer fromUid,Integer toUid);
     public boolean messageInsert(Message message);
     public Page<Message> messageIPage(Integer user_a, Integer user_b, Integer current, Integer size);
+    public List<Message> unreadMessage(Integer formUid,Integer toUid);
 
 
 }
