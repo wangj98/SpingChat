@@ -8,9 +8,9 @@
 - 退出
 - 狀態保持
 
-###/user/login
+### /user/login
 
-###/user/register
+### /user/register
 
 
 ## ChatController
@@ -24,10 +24,10 @@
 - cid: 会话id
 - message: 会话内容
 
-###/chat/pub/historyMessage
+### /chat/pub/historyMessage
 -按页查询历史信息
 
-###/chat/pub/unreadMessage
+### /chat/pub/unreadMessage
 -查看未读信息
 
 
@@ -87,7 +87,7 @@ private String create_time;
 "username": ""},
 }
 ```
-###翻页传入信息
+### 翻页传入信息
 ```
 {
 "fromUid":"",
