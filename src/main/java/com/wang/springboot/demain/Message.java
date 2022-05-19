@@ -22,7 +22,6 @@ public class Message {
     private Integer cid;
     private String text;
     private String sendTime;
-    private Integer readState;
 
 
 }
