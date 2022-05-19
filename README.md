@@ -28,13 +28,14 @@
 -按页查询历史信息
 
 ### /chat/pub/unreadMessage
--查看未读信息
+-查看未读信息数量
 
 
 ## 表
 - user
 - user_chat_cid
 - user_chat_message
+- user-chat-unread
 ### user
 ```
 {
@@ -68,10 +69,18 @@ private String create_time;
     private Integer cid;
     private String text;
     private String sendTime;
-    private Integer readState;
-
 
 }
+```
+### user_chat_unread
+```
+public class Unread {
+    private Integer id;
+    private Integer last_read_id;
+    private Integer to_uid;
+    private Integer cid;
+}
+
 ```
 # Api
 
@@ -79,7 +88,9 @@ private String create_time;
 ```
 {
 "code":0,
-"data":{"address": "",
+"msg":"",
+"data":{
+"address": "",
 "sex": "",
 "token": "",
 "age": ,

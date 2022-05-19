@@ -9,6 +9,11 @@ spring:
     password: password
     druid:
       max-wait: 600000
+  redis:
+    database: 0
+    host: 127.0.0.1
+    password: password
+    port: 6379
 
 
 

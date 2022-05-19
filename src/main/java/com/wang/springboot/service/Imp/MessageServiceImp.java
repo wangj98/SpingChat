@@ -74,7 +74,8 @@ public class MessageServiceImp implements MessageService {
         if(user_a>user_b){
             user_a=user_a+user_b-(user_b=user_a);
         }
-        qw.eq("fromUid", user_a).eq("toUid", user_b).last("limit 1");//存在多条，只查一条
+        //存在多条，只查一条
+        qw.eq("fromUid", user_a).eq("toUid", user_b).last("limit 1");
         Integer cid = messageDao.selectOne(qw).getCid();
 
 
@@ -93,11 +94,20 @@ public class MessageServiceImp implements MessageService {
         qw.eq("fromUid",formUid).eq("toUid",toUid).isNull("readState");
         List<Message> messages = messageDao.selectList(qw);
 
+
         UpdateWrapper<Message> uw = new UpdateWrapper<>();
         uw.set("readState",1).isNull("readState");
         messageDao.update(null,uw);
 
 
         return messages;
+    }
+
+    @Override
+    public Integer selectLast(Integer cid, Integer toUid) {
+        QueryWrapper<Message> qw = new QueryWrapper<>();
+        qw.eq("cid",cid).eq("toUid",toUid).orderByDesc("id").last("limit 1");
+        Integer id = messageDao.selectOne(qw).getId();
+        return id;
     }
 }

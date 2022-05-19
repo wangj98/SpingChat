@@ -21,10 +21,6 @@ public class UserServiceImp implements UserService {
 
         QueryWrapper<User> qw2 = new QueryWrapper<>();
         qw2.eq("id", id).eq("password", password);//查询账号密码
-
-
-
-
         return userDao.selectOne(qw2);
 
 
